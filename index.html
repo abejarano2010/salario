@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Deducciones</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Deducciones</h1>
+        <p>Ingrese su salario bruto:</p>
+        <input type="number" id="salarioBruto" placeholder="Salario bruto" />
+        <button onclick="calcularDeducciones()">Calcular</button>
+        <div class="result" id="resultado"></div>
+    </div>
+
+    <script>
+        function calcularDeducciones() {
+            const salarioBruto = parseFloat(document.getElementById('salarioBruto').value);
+            if (isNaN(salarioBruto) || salarioBruto <= 0) {
+                document.getElementById('resultado').textContent = "Por favor, ingrese un salario válido.";
+                return;
+            }
+
+            // Deducciones según la ley de Costa Rica
+            const porcentajeSeguro = 0.10; // 10% para CCSS (por ejemplo)
+            const tablaRenta = [
+                { limite: 863000, tasa: 0 },
+                { limite: 1236000, tasa: 0.10 },
+                { limite: Infinity, tasa: 0.15 }
+            ];
+
+            // Calcular deducción de seguro
+            const deduccionSeguro = salarioBruto * porcentajeSeguro;
+
+            // Calcular deducción de renta
+            let deduccionRenta = 0;
+            for (let tramo of tablaRenta) {
+                if (salarioBruto <= tramo.limite) {
+                    deduccionRenta = salarioBruto * tramo.tasa;
+                    break;
+                }
+            }
+
+            // Salario neto
+            const salarioNeto = salarioBruto - deduccionSeguro - deduccionRenta;
+
+            // Mostrar resultados
+            document.getElementById('resultado').innerHTML = `
+                <p>Deducción por Seguro: ₡${deduccionSeguro.toFixed(2)}</p>
+                <p>Deducción por Renta: ₡${deduccionRenta.toFixed(2)}</p>
+                <p><strong>Salario Neto: ₡${salarioNeto.toFixed(2)}</strong></p>
+            `;
+        }
+    </script>
+</body>
+</html>
